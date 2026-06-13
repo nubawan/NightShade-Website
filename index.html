@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NightShade — Precision Screen Filter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════════════
+           VOID ARCHITECTURE — DESIGN TOKENS
+           ═══════════════════════════════════════════════════ */
+        :root {
+            --void-black: #08090B;
+            --void-deep: #0D0F14;
+            --void-mid: #14171F;
+            --void-rim: #1C2030;
+            --void-ghost: #2A2E3E;
+            --text-primary: #F0F2F7;
+            --text-secondary: #8A90A8;
+            --text-muted: #4A5068;
+            --accent-amber: #E8A040;
+            --accent-amber-dim: #A86820;
+            --accent-ice: #5BB8D4;
+            --status-on: #3DDC84;
+            --danger: #E85540;
+
+            --font-primary: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+            --radius-xs: 4px;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-pill: 9999px;
+
+            --elevation-1: 0px 2px 8px rgba(0,0,0,0.35);
+            --elevation-2: 0px 4px 16px rgba(0,0,0,0.45);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body {
+            font-family: var(--font-primary);
+            background: var(--void-black);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .page-content { display: none; min-height: 80vh; }
+        .page-content.active { display: block; }
+
+        /* ═══════════════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════════════ */
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 14px 24px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(8, 9, 11, 0.95); border-bottom: 1px solid var(--void-rim);
+        }
+        .nav-brand {
+            font-size: 12px; font-weight: 600; letter-spacing: 0.8px;
+            color: var(--text-muted); text-transform: uppercase; cursor: pointer; text-decoration: none;
+        }
+        .nav-cta {
+            font-size: 13px; font-weight: 500; color: var(--accent-amber); text-decoration: none;
+            padding: 6px 20px; border: 1px solid var(--accent-amber-dim); border-radius: var(--radius-pill);
+            transition: background 0.2s, color 0.2s;
+        }
+        .nav-cta:hover { background: var(--accent-amber); color: var(--void-black); }
+
+        /* ═══════════════════════════════════════════════════
+           BUTTONS
+           ═══════════════════════════════════════════════════ */
+        .btn-primary {
+            display: inline-flex; align-items: center; justify-content: center; width: fit-content;
+            padding: 14px 40px; font-family: var(--font-primary); font-size: 14px; font-weight: 500;
+            color: var(--void-black); background: var(--accent-amber); border: none; border-radius: var(--radius-pill);
+            cursor: pointer; text-decoration: none; transition: filter 0.2s;
+        }
+        .btn-primary:hover { filter: brightness(1.1); }
+
+        /* ═══════════════════════════════════════════════════
+           HERO
+           ═══════════════════════════════════════════════════ */
+        .hero { min-height: 100vh; display: flex; align-items: center; padding-top: 60px; padding-bottom: 60px; }
+        .hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; width: 100%; }
+        .hero-content { display: flex; flex-direction: column; }
+        .hero-brand { font-size: 12px; font-weight: 600; letter-spacing: 0.8px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 32px; }
+        .hero-percentage { font-size: 64px; font-weight: 300; letter-spacing: -1.5px; line-height: 1; color: var(--text-primary); }
+        .hero-percent-sign { font-size: 48px; font-weight: 300; letter-spacing: -1px; color: var(--text-secondary); }
+        .hero-subtitle { font-size: 20px; font-weight: 400; color: var(--text-secondary); margin-top: 16px; margin-bottom: 40px; line-height: 1.4; }
+
+        /* ═══════════════════════════════════════════════════
+           PHONE MOCKUP
+           ═══════════════════════════════════════════════════ */
+        .phone-wrapper { display: flex; justify-content: center; align-items: center; }
+        .phone { width: 280px; height: 580px; border-radius: 36px; border: 2px solid var(--void-rim); background: var(--void-black); position: relative; overflow: hidden; box-shadow: var(--elevation-2); }
+        .phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100px; height: 26px; background: var(--void-black); border-radius: 0 0 16px 16px; z-index: 12; }
+        .phone-home-indicator { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 96px; height: 4px; background: var(--void-ghost); border-radius: 2px; z-index: 12; }
+        .phone-zone1 { position: absolute; top: 0; left: 0; right: 0; height: 58%; padding: 36px 20px 16px; background: #1A1208; z-index: 2; display: flex; flex-direction: column; }
+        .phone-status-bar { display: flex; justify-content: space-between; font-size: 11px; font-weight: 500; color: var(--text-secondary); margin-bottom: 16px; }
+        .phone-app-brand { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .phone-toggle { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--void-ghost); }
+        .phone-big-number { font-size: 56px; font-weight: 300; letter-spacing: -1.5px; line-height: 1; color: var(--text-primary); }
+        .phone-pct-label { font-size: 18px; font-weight: 300; color: var(--text-secondary); margin-bottom: 14px; }
+        .phone-filter-status { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; color: var(--status-on); text-transform: uppercase; margin-bottom: 4px; }
+        .phone-preset-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+        .phone-stop-wrap { display: flex; justify-content: center; }
+        .phone-stop-btn { font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: var(--danger); padding: 5px 24px; border: 1px solid rgba(232, 85, 64, 0.4); border-radius: var(--radius-pill); background: none; }
+        .phone-zone2 { position: absolute; bottom: 0; left: 0; right: 0; height: 44%; background: var(--void-black); border-radius: var(--radius-lg) var(--radius-lg) 0 0; z-index: 4; padding: 20px 18px 28px; display: flex; flex-direction: column; justify-content: flex-end; }
+        .phone-dim-label { font-size: 9px; font-weight: 600; letter-spacing: 0.8px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .phone-slider-track { width: 100%; height: 4px; background: var(--void-ghost); border-radius: 2px; position: relative; margin-bottom: 4px; }
+        .phone-slider-fill { height: 100%; width: 40%; background: var(--accent-amber); border-radius: 2px; }
+        .phone-slider-thumb { position: absolute; top: 50%; left: 40%; transform: translate(-50%, -50%); width: 14px; height: 14px; background: var(--text-primary); border-radius: 50%; box-shadow: var(--elevation-1); }
+        .phone-slider-ticks { display: flex; justify-content: space-between; font-size: 9px; color: var(--text-muted); margin-bottom: 18px; }
+        .phone-chips { display: flex; gap: 8px; }
+        .phone-chip { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.06); }
+        .phone-chip--selected { border: 2px solid var(--void-ghost); }
+        .phone-chip-add { border: 1px dashed var(--void-ghost); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-muted); background: none; }
+        .phone-amber-overlay { position: absolute; inset: 0; background: rgba(255, 183, 77, 0.22); pointer-events: none; z-index: 8; }
+
+        /* ═══════════════════════════════════════════════════
+           FEATURES & PRESETS
+           ═══════════════════════════════════════════════════ */
+        .features { padding: 96px 0; border-top: 1px solid var(--void-rim); }
+        .features-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+        .feature-card { background: var(--void-deep); border: 1px solid var(--void-rim); border-radius: var(--radius-md); padding: 32px 24px; transition: border-color 0.3s; }
+        .feature-card:hover { border-color: var(--void-ghost); }
+        .feature-label { font-size: 12px; font-weight: 600; letter-spacing: 0.8px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 16px; }
+        .feature-title { font-size: 20px; font-weight: 500; color: var(--text-primary); margin-bottom: 12px; }
+        .feature-description { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+        .feature-description strong { color: var(--text-primary); font-weight: 500; }
+        .feature-swatches { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .feature-swatch-row { display: flex; align-items: center; gap: 12px; }
+        .feature-swatch-dot { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.06); }
+        .feature-swatch-name { font-size: 13px; color: var(--text-secondary); }
+        .feature-swatch-opacity { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+
+        .presets-section { padding: 96px 0; border-top: 1px solid var(--void-rim); }
+        .presets-header { margin-bottom: 48px; }
+        .presets-label { font-size: 12px; font-weight: 600; letter-spacing: 0.8px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .presets-title { font-size: 28px; font-weight: 500; letter-spacing: -0.3px; color: var(--text-primary); }
+        .presets-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+        .preset-item { display: flex; flex-direction: column; gap: 8px; }
+        .preset-swatch { width: 100%; aspect-ratio: 4 / 3; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.04); transition: filter 0.2s; }
+        .preset-item:hover .preset-swatch { filter: brightness(1.15); }
+        .preset-name { font-size: 12px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* ═══════════════════════════════════════════════════
+           LEGAL & CONTACT PAGES
+           ═══════════════════════════════════════════════════ */
+        .legal-page { padding: 140px 0 96px; max-width: 800px; margin: 0 auto; }
+        .legal-page h1 { font-size: 28px; font-weight: 500; letter-spacing: -0.3px; color: var(--text-primary); margin-bottom: 32px; }
+        .legal-page h2 { font-size: 20px; font-weight: 500; color: var(--text-primary); margin-top: 32px; margin-bottom: 12px; }
+        .legal-page p { font-size: 16px; font-weight: 400; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.6; }
+        .legal-page ul { margin-bottom: 16px; padding-left: 24px; }
+        .legal-page li { font-size: 16px; font-weight: 400; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.6; }
+        .legal-page strong { color: var(--text-primary); font-weight: 500; }
+        
+        /* FIX: Separated text links from buttons so button text stays black */
+        .legal-page p a { 
+            color: var(--accent-amber); 
+            text-decoration: none; 
+            transition: opacity 0.2s; 
+        }
+        .legal-page p a:hover { opacity: 0.8; }
+        
+        .legal-updated { font-size: 13px; color: var(--text-muted); margin-bottom: 40px; }
+
+        /* ═══════════════════════════════════════════════════
+           FOOTER
+           ═══════════════════════════════════════════════════ */
+        .footer { padding: 48px 0; border-top: 1px solid var(--void-rim); }
+        .footer-inner { display: flex; justify-content: space-between; align-items: center; }
+        .footer-brand { font-size: 12px; font-weight: 600; letter-spacing: 0.8px; color: var(--text-muted); text-transform: uppercase; cursor: pointer; }
+        .footer-links { display: flex; gap: 24px; }
+        .footer-link { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; cursor: pointer; background: none; border: none; font-family: var(--font-primary); }
+        .footer-link:hover { color: var(--accent-amber); }
+
+        /* ═══════════════════════════════════════════════════
+           ANIMATIONS
+           ═══════════════════════════════════════════════════ */
+        .fade-in { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* ═══════════════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════════════ */
+        @media (max-width: 1024px) { .presets-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 768px) {
+            .hero-inner { grid-template-columns: 1fr; gap: 48px; text-align: center; }
+            .btn-primary { margin: 0 auto; }
+            .hero-percentage { font-size: 56px; }
+            .hero-percent-sign { font-size: 40px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .presets-grid { grid-template-columns: repeat(3, 1fr); }
+            .phone { width: 240px; height: 500px; }
+            .phone-big-number { font-size: 48px; }
+        }
+        @media (max-width: 480px) {
+            .hero { padding-top: 48px; padding-bottom: 48px; }
+            .hero-percentage { font-size: 48px; }
+            .hero-percent-sign { font-size: 36px; }
+            .hero-subtitle { font-size: 17px; }
+            .presets-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+            .features, .presets-section { padding: 64px 0; }
+            .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═════════════════ NAVIGATION ═════════════════ -->
+    <nav class="nav">
+        <a class="nav-brand" onclick="navigateTo('home')">NightShade</a>
+        <a href="https://up-4.net/d/104b4" target="_blank" rel="noopener noreferrer" class="nav-cta">Download</a>
+    </nav>
+
+    <!-- ═════════════════ HOME PAGE ═════════════════ -->
+    <div id="page-home" class="page-content active">
+        <section class="hero">
+            <div class="container">
+                <div class="hero-inner">
+                    <div class="hero-content fade-in">
+                        <span class="hero-brand">Precision Screen Filter</span>
+                        <div class="hero-percentage">
+                            <span id="hero-number">0</span><span class="hero-percent-sign">%</span>
+                        </div>
+                        <p class="hero-subtitle">Precision screen dimming. 0% to 180%.</p>
+                        <a href="https://up-4.net/d/104b4" target="_blank" rel="noopener noreferrer" class="btn-primary hero-cta">Download</a>
+                    </div>
+
+                    <div class="phone-wrapper fade-in" style="transition-delay: 0.15s;">
+                        <div class="phone">
+                            <div class="phone-notch"></div>
+                            <div class="phone-home-indicator"></div>
+                            <div class="phone-zone1">
+                                <div class="phone-status-bar"><span>9:41</span><span>■ ■ ■</span></div>
+                                <div class="phone-app-brand"><span>NightShade</span><div class="phone-toggle"></div></div>
+                                <div class="phone-big-number">72</div>
+                                <div class="phone-pct-label">%</div>
+                                <div class="phone-filter-status">Filter Active</div>
+                                <div class="phone-preset-label">Night Reading</div>
+                                <div class="phone-stop-wrap"><span class="phone-stop-btn">STOP</span></div>
+                            </div>
+                            <div class="phone-zone2">
+                                <div class="phone-dim-label">Dim Level</div>
+                                <div class="phone-slider-track">
+                                    <div class="phone-slider-fill"></div>
+                                    <div class="phone-slider-thumb"></div>
+                                </div>
+                                <div class="phone-slider-ticks"><span>0%</span><span>100%</span><span>180%</span></div>
+                                <div class="phone-chips">
+                                    <div class="phone-chip phone-chip--selected" style="background: #FFB74D;"></div>
+                                    <div class="phone-chip" style="background: #C45B1A;"></div>
+                                    <div class="phone-chip" style="background: #FF6A40;"></div>
+                                    <div class="phone-chip" style="background: #050B18;"></div>
+                                    <div class="phone-chip" style="background: #D4A855;"></div>
+                                    <div class="phone-chip" style="background: #1A0000;"></div>
+                                    <div class="phone-chip" style="background: #5BB8D4;"></div>
+                                    <div class="phone-chip phone-chip-add">+</div>
+                                </div>
+                            </div>
+                            <div class="phone-amber-overlay"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature-card fade-in">
+                        <div class="feature-label">Color</div>
+                        <div class="feature-title">Cinema Presets</div>
+                        <div class="feature-swatches">
+                            <div class="feature-swatch-row"><div class="feature-swatch-dot" style="background: #C45B1A;"></div><span class="feature-swatch-name">Orange & Teal</span><span class="feature-swatch-opacity">20%</span></div>
+                            <div class="feature-swatch-row"><div class="feature-swatch-dot" style="background: #C45000;"></div><span class="feature-swatch-name">Blade Runner Amber</span><span class="feature-swatch-opacity">40%</span></div>
+                            <div class="feature-swatch-row"><div class="feature-swatch-dot" style="background: #0F0F12;"></div><span class="feature-swatch-name">Noir Veil</span><span class="feature-swatch-opacity">58%</span></div>
+                        </div>
+                    </div>
+                    <div class="feature-card fade-in" style="transition-delay: 0.1s;">
+                        <div class="feature-label">Brightness</div>
+                        <div class="feature-title">Extended Dimming</div>
+                        <p class="feature-description">Dual-layer overlay goes below minimum brightness. Up to <strong>180% dim</strong> without root access. Two stacked WindowManager views produce combined opacity far below the system brightness slider.</p>
+                    </div>
+                    <div class="feature-card fade-in" style="transition-delay: 0.2s;">
+                        <div class="feature-label">Privacy</div>
+                        <div class="feature-title">Privacy Filter</div>
+                        <p class="feature-description">Software micro-louver reduces side-angle readability by 30–50%. No hardware protector needed. Three density modes: Subtle, Standard, Strong.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="presets-section">
+            <div class="container">
+                <div class="presets-header fade-in">
+                    <div class="presets-label">18 Presets</div>
+                    <div class="presets-title">Filter Presets</div>
+                </div>
+                <div class="presets-grid fade-in" id="presets-grid"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ═════════════════ PRIVACY POLICY PAGE ═════════════════ -->
+    <div id="page-privacy" class="page-content">
+        <div class="container">
+            <div class="legal-page">
+                <h1>Privacy Policy</h1>
+                <div class="legal-updated">Last updated: June 15, 2025</div>
+                
+                <p>NightShade is a precision screen filter application. It dims and tints your screen using local system overlays. It is not a wellness app, does not track your sleep, and does not collect personal data.</p>
+
+                <h2>1. Data Collection</h2>
+                <p>NightShade collects <strong>zero</strong> personal information. We do not collect names, email addresses, device identifiers, location data, or usage analytics. No data is transmitted from your device to our servers, because we do not operate any servers.</p>
+
+                <h2>2. Permissions Required</h2>
+                <p>The application requests the following Android permissions solely to perform its core functions:</p>
+                <ul>
+                    <li><strong>System Alert Window (Display over other apps):</strong> Required to draw the color filter overlay on top of the screen and across other applications.</li>
+                    <li><strong>Foreground Service:</strong> Required to keep the screen filter active when the app is minimized or the screen is locked. The foreground notification is mandatory for Android system stability.</li>
+                    <li><strong>Receive Boot Completed:</strong> Required to automatically restore your active filter preset and opacity level after the device restarts.</li>
+                </ul>
+
+                <h2>3. Data Storage</h2>
+                <p>All user preferences—such as filter opacity, selected color, and custom presets—are stored locally on the device using Android's SharedPreferences and React Native's AsyncStorage. This data is never backed up, synced, or shared. Uninstalling the app permanently deletes all stored data.</p>
+
+                <h2>4. Third-Party Services</h2>
+                <p>NightShade does not integrate with any third-party analytics, advertising, or crash-reporting SDKs. There are no ads, no trackers, and no background network requests.</p>
+
+                <h2>5. Children's Privacy</h2>
+                <p>Because we collect no data whatsoever, our application is safe for users of all ages. We do not knowingly collect information from children because we do not collect information from anyone.</p>
+
+                <h2>6. Changes to This Policy</h2>
+                <p>If the application's data practices change, this policy will be updated accordingly. All changes will be reflected in the "Last updated" date above.</p>
+
+                <h2>7. Contact</h2>
+                <p>If you have questions about this privacy policy, contact us at <a href="mailto:support@nightshade.app">support@nightshade.app</a>.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═════════════════ CONTACT PAGE ═════════════════ -->
+    <div id="page-contact" class="page-content">
+        <div class="container">
+            <div class="legal-page">
+                <h1>Contact</h1>
+                <div class="legal-updated">Support inquiries and policy questions only.</div>
+                
+                <p>NightShade is a precision instrument, not a social platform. We keep communication channels limited to essential support and legal inquiries.</p>
+
+                <h2>Support</h2>
+                <p>For technical issues, bug reports, or questions about overlay permissions, email: <a href="mailto:support@nightshade.app">support@nightshade.app</a></p>
+
+                <h2>Privacy Inquiries</h2>
+                <p>For questions regarding the Privacy Policy or data handling practices: <a href="mailto:privacy@nightshade.app">privacy@nightshade.app</a></p>
+
+                <h2>Response Time</h2>
+                <p>We acknowledge all inquiries within 48 hours. Complex technical issues may require up to 5 business days for a thorough investigation and response.</p>
+                
+                <br>
+                <a href="https://up-4.net/d/104b4" target="_blank" rel="noopener noreferrer" class="btn-primary">Download NightShade</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═════════════════ FOOTER ═════════════════ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <span class="footer-brand" onclick="navigateTo('home')">NightShade</span>
+                <div class="footer-links">
+                    <a href="https://github.com/nightshade" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub</a>
+                    <button class="footer-link" onclick="navigateTo('privacy')">Privacy Policy</button>
+                    <button class="footer-link" onclick="navigateTo('contact')">Contact</button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ═════════════════ SCRIPTS ═════════════════ -->
+    <script>
+        // ─── Preset Data ───
+        const presets = [
+            { name: 'Orange & Teal',     color: '#C45B1A' },
+            { name: 'Cinematic Black',    color: '#050B18' },
+            { name: 'Anamorphic Night',   color: '#0A1428' },
+            { name: 'Kodak Vision3',      color: '#D4A855' },
+            { name: 'Blade Runner Amber', color: '#C45000' },
+            { name: 'Noir Veil',          color: '#0F0F12' },
+            { name: '4K Reference',       color: '#1A2840' },
+            { name: '8K HDR',             color: '#12182E' },
+            { name: 'Arctic Monitor',     color: '#C8E8FF' },
+            { name: 'Night Reading',      color: '#FFB74D' },
+            { name: 'Sleep Mode',         color: '#FF6A40' },
+            { name: 'Golden Hour',        color: '#FFB03A' },
+            { name: 'Tobacco',            color: '#C8903A' },
+            { name: 'Ultra Dark',         color: '#000000' },
+            { name: 'Midnight Oil',       color: '#0A0505' },
+            { name: 'Observatory',        color: '#1A0000' },
+            { name: 'Focus Mode',         color: '#5BB8D4' },
+            { name: 'Red Light',          color: '#D32F2F' },
+        ];
+
+        // ─── Render Presets ───
+        const grid = document.getElementById('presets-grid');
+        presets.forEach(preset => {
+            const item = document.createElement('div');
+            item.className = 'preset-item';
+            item.innerHTML = `
+                <div class="preset-swatch" style="background:${preset.color};"></div>
+                <div class="preset-name">${preset.name}</div>
+            `;
+            grid.appendChild(item);
+        });
+
+        // ─── Count-Up Animation ───
+        function countUp(target, duration) {
+            const el = document.getElementById('hero-number');
+            const start = performance.now();
+            function update(now) {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.round(target * eased);
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        }
+
+        // ─── SPA Router ───
+        function navigateTo(page) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            
+            // Show target page
+            const targetPage = document.getElementById(`page-${page}`);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                
+                // Trigger fade-in animations if going home
+                if (page === 'home') {
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                    setTimeout(() => {
+                        document.querySelectorAll('#page-home .fade-in').forEach(el => el.classList.add('visible'));
+                    }, 100);
+                } else {
+                    window.scrollTo({top: 0, behavior: 'instant'});
+                }
+            }
+        }
+
+        // Handle back/forward navigation
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.replace('#', '') || 'home';
+            navigateTo(hash);
+        });
+
+        // Initial load check
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.replace('#', '') || 'home';
+            if (hash !== 'home') {
+                navigateTo(hash);
+            }
+        });
+
+        // ─── Intersection Observer ───
+        const fadeObs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    fadeObs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => fadeObs.observe(el));
+
+        // Trigger hero number animation
+        const heroObs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => countUp(72, 1500), 300);
+                    heroObs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+        
+        const heroEl = document.querySelector('.hero');
+        if (heroEl) heroObs.observe(heroEl);
+    </script>
+
+</body>
+</html>
