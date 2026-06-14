@@ -162,11 +162,18 @@
 
           <div class="flex items-center gap-2.5 mb-8 flex-wrap anim-hero" id="colorChips" style="opacity:0; transform:translateY(20px)"></div>
 
-          <div class="anim-hero" style="opacity:0; transform:translateY(20px)">
+          <div class="anim-hero flex flex-wrap items-center gap-3" style="opacity:0; transform:translateY(20px)">
             <a href="https://github.com/nubawan/NightShade-Website/releases/download/v1.0/NightShadeApp.apk" class="btn-cta inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-accentAmber text-voidBlack font-medium text-sm tracking-wide">
               <span class="iconify" data-icon="mdi:download" data-width="18"></span>
               Download APK
             </a>
+            <div class="relative inline-flex">
+              <a href="#" onclick="return false;" class="btn-cta inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-voidGhost text-textSecondary font-medium text-sm tracking-wide cursor-not-allowed opacity-80">
+                <span class="iconify" data-icon="mdi:google-play" data-width="18"></span>
+                Play Store
+              </a>
+              <span class="absolute -top-2.5 -right-2 px-2 py-0.5 rounded-full bg-accentIce text-voidBlack text-[9px] font-bold tracking-wider uppercase" style="font-size:9px;">Coming Soon</span>
+            </div>
           </div>
         </div>
 
@@ -312,10 +319,19 @@
       </svg>
       <h2 class="text-3xl md:text-4xl font-light text-textPrimary mb-4" style="letter-spacing: -1.5px">Precision control.<br>Nothing less.</h2>
       <p class="text-textSecondary text-sm mb-8 max-w-xs mx-auto">Not a wellness app. Not a meditation tool. A light control instrument for Android.</p>
-      <a href="https://github.com/nubawan/NightShade-Website/releases/download/v1.0/NightShadeApp.apk" class="btn-cta inline-flex items-center gap-2.5 px-10 py-4 rounded-full bg-accentAmber text-voidBlack font-medium text-sm tracking-wide">
-        <span class="iconify" data-icon="mdi:android" data-width="20"></span>
-        Download APK
-      </a>
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <a href="https://github.com/nubawan/NightShade-Website/releases/download/v1.0/NightShadeApp.apk" class="btn-cta inline-flex items-center gap-2.5 px-10 py-4 rounded-full bg-accentAmber text-voidBlack font-medium text-sm tracking-wide">
+          <span class="iconify" data-icon="mdi:android" data-width="20"></span>
+          Download APK
+        </a>
+        <div class="relative inline-flex">
+          <a href="#" onclick="return false;" class="btn-cta inline-flex items-center gap-2.5 px-10 py-4 rounded-full bg-voidGhost text-textSecondary font-medium text-sm tracking-wide cursor-not-allowed opacity-80">
+            <span class="iconify" data-icon="mdi:google-play" data-width="20"></span>
+            Play Store
+          </a>
+          <span class="absolute -top-2.5 -right-2 px-2 py-0.5 rounded-full bg-accentIce text-voidBlack text-[9px] font-bold tracking-wider uppercase" style="font-size:9px;">Coming Soon</span>
+        </div>
+      </div>
       <p class="text-textMuted text-xs mt-5">Android 7.0+ · Free · No ads · No root</p>
     </div>
   </section>
@@ -326,9 +342,9 @@
       <span class="text-xs font-semibold tracking-[0.8px] text-textMuted uppercase">NightShade</span>
       <div class="flex gap-6">
         <a href="https://github.com/nubawan/NightShade-Website" target="_blank" rel="noopener noreferrer" class="link-amber text-sm text-textSecondary">GitHub</a>
-        <a href="#" onclick="openModal('privacy'); return false;" class="link-amber text-sm text-textSecondary">Privacy Policy</a>
-        <a href="#" onclick="openModal('terms'); return false;" class="link-amber text-sm text-textSecondary">Terms of Service</a>
-        <a href="#" onclick="openModal('contact'); return false;" class="link-amber text-sm text-textSecondary">Contact</a>
+        <a href="privacy.html" class="link-amber text-sm text-textSecondary">Privacy Policy</a>
+        <a href="privacy.html#terms" class="link-amber text-sm text-textSecondary">Terms of Service</a>
+        <a href="mailto:nightshade.app@proton.me" class="link-amber text-sm text-textSecondary">Contact</a>
       </div>
       <p class="text-textMuted text-xs mt-2">&copy; 2025 NightShade. All rights reserved.</p>
     </div>
