@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NightShade — Precision Screen Filter</title>
+  <meta name="description" content="NightShade is a precision screen dimming and filter app for Android. 18 presets, 0-180% dimming, privacy filter, no ads, no root required.">
+  <meta name="keywords" content="screen filter, screen dimmer, night mode, blue light filter, privacy screen, Android app, cinema filter">
+  <meta name="author" content="NightShade">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="NightShade — Precision Screen Filter">
+  <meta property="og:description" content="Precision screen dimming. 0% to 180%. 18 built-in presets. No ads. No root.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nubawan.github.io/NightShade-Website/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="NightShade — Precision Screen Filter">
+  <meta name="twitter:description" content="Precision screen dimming. 0% to 180%. 18 built-in presets. No ads. No root.">
+  <link rel="canonical" href="https://nubawan.github.io/NightShade-Website/">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -313,11 +325,12 @@
     <div class="max-w-6xl mx-auto flex flex-col items-center gap-4">
       <span class="text-xs font-semibold tracking-[0.8px] text-textMuted uppercase">NightShade</span>
       <div class="flex gap-6">
-        <a href="#" class="link-amber text-sm text-textSecondary">GitHub</a>
-        <a href="#" class="link-amber text-sm text-textSecondary">Privacy Policy</a>
-        <a href="#" class="link-amber text-sm text-textSecondary">Contact</a>
+        <a href="https://github.com/nubawan/NightShade-Website" target="_blank" rel="noopener noreferrer" class="link-amber text-sm text-textSecondary">GitHub</a>
+        <a href="#" onclick="openModal('privacy'); return false;" class="link-amber text-sm text-textSecondary">Privacy Policy</a>
+        <a href="#" onclick="openModal('terms'); return false;" class="link-amber text-sm text-textSecondary">Terms of Service</a>
+        <a href="#" onclick="openModal('contact'); return false;" class="link-amber text-sm text-textSecondary">Contact</a>
       </div>
-      <p class="text-textMuted text-xs mt-2">v3.0 · Void Architecture</p>
+      <p class="text-textMuted text-xs mt-2">&copy; 2025 NightShade. All rights reserved.</p>
     </div>
   </footer>
 
@@ -589,6 +602,179 @@
     // --- INITIALIZATION ---
     buildPresetsGrid('all');
     updateUI();
+
+    // --- MODAL ENGINE ---
+    function openModal(type) {
+      const modal = document.getElementById('legalModal');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+
+      if (type === 'privacy') {
+        title.textContent = 'Privacy Policy';
+        body.innerHTML = `
+          <p class="text-textMuted text-xs mb-6">Last updated: June 15, 2025</p>
+          <div class="space-y-5 text-sm text-textSecondary leading-relaxed">
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">1. Overview</h4>
+              <p>NightShade is a precision screen filter and dimming application for Android devices. We are committed to protecting your privacy. This policy explains what information NightShade collects, how it is used, and your choices regarding your data.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">2. Data Collection</h4>
+              <p>NightShade does <strong>not</strong> collect, store, transmit, or share any personal data. The app functions entirely on your device. No user accounts, email addresses, device identifiers, location data, or usage analytics are collected. We do not use Firebase, Google Analytics, or any third-party analytics or crash-reporting services.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">3. Permissions</h4>
+              <p>NightShade requests the following Android permissions solely for its core functionality:</p>
+              <ul class="list-disc list-inside mt-2 space-y-1">
+                <li><strong>SYSTEM_ALERT_WINDOW</strong> — Required to display the screen filter overlay on top of other apps. This is essential for the dimming and filter feature to work.</li>
+                <li><strong>FOREGROUND_SERVICE</strong> — Required to keep the filter active while you use other apps or when the screen is locked.</li>
+              </ul>
+              <p class="mt-2">No other permissions are requested. No camera, microphone, contacts, storage, or network permissions are used.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">4. Internet &amp; Network Access</h4>
+              <p>NightShade does not require internet access to function. The app operates completely offline. No data is sent to any server, cloud service, or third-party API. There are no in-app advertisements, trackers, or third-party SDKs that communicate over the network.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">5. Third-Party Services</h4>
+              <p>NightShade does not integrate with any third-party services, including but not limited to: social media platforms, advertising networks, analytics providers, or cloud storage services. There are no in-app purchases or payment processors.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">6. Data Storage</h4>
+              <p>All app preferences (dim level, selected preset, filter color) are stored locally on your device using Android's SharedPreferences. This data never leaves your device and can be cleared at any time by uninstalling the app or clearing app data in Android Settings.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">7. Children's Privacy</h4>
+              <p>NightShade does not knowingly collect information from children. Since we collect no data at all, our app is safe for users of all ages. No age verification is required.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">8. Security</h4>
+              <p>Since NightShade does not collect or transmit any data, there is minimal security risk. The overlay permission is used exclusively for screen dimming and cannot be used to capture or read screen content.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">9. Changes to This Policy</h4>
+              <p>We may update this Privacy Policy from time to time. Any changes will be reflected on this page with an updated "Last updated" date. Continued use of the app after changes constitutes acceptance of the revised policy.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">10. Contact</h4>
+              <p>If you have questions about this Privacy Policy, please contact us at <a href="mailto:nightshade.app@proton.me" class="text-accentAmber hover:underline">nightshade.app@proton.me</a>.</p>
+            </div>
+          </div>
+        `;
+      } else if (type === 'terms') {
+        title.textContent = 'Terms of Service';
+        body.innerHTML = `
+          <p class="text-textMuted text-xs mb-6">Last updated: June 15, 2025</p>
+          <div class="space-y-5 text-sm text-textSecondary leading-relaxed">
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">1. Acceptance of Terms</h4>
+              <p>By downloading, installing, or using NightShade, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you should not use the application.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">2. Description of Service</h4>
+              <p>NightShade is a free, open-source Android application that provides screen dimming and color filter functionality. It uses overlay technology to reduce screen brightness below the system minimum and apply color tint presets for various use cases including cinema viewing, night reading, and privacy.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">3. Use of the App</h4>
+              <p>You may use NightShade for personal, non-commercial purposes. You agree not to: (a) modify, reverse-engineer, or decompile the application; (b) use the app for any unlawful purpose; (c) attempt to interfere with the proper functioning of the app.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">4. Safety &amp; Disclaimers</h4>
+              <p>NightShade is designed with built-in safety features, including an emergency dim reset. However, the app is provided "as is" without warranty of any kind. We are not responsible for any issues arising from the use of the app at extreme dim levels. If you cannot see your screen, use the emergency reset feature or restart your device. Do not use the app while operating vehicles or machinery where screen visibility is critical for safety.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">5. Permissions</h4>
+              <p>The app requires the SYSTEM_ALERT_WINDOW permission to display the filter overlay and FOREGROUND_SERVICE to keep the filter active. These permissions are used solely for the app's core functionality and no other purpose. See our Privacy Policy for full details.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">6. Intellectual Property</h4>
+              <p>NightShade is open-source software. The source code is available on GitHub. The NightShade name, logo, and visual design are the intellectual property of the NightShade project. You may not use the NightShade name or branding without prior written permission.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">7. Limitation of Liability</h4>
+              <p>In no event shall NightShade or its developers be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses resulting from your use of the application.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">8. Changes to Terms</h4>
+              <p>We reserve the right to modify these Terms at any time. Changes will be effective immediately upon posting. Your continued use of the app after changes constitutes acceptance of the revised terms.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">9. Governing Law</h4>
+              <p>These Terms shall be governed by and construed in accordance with applicable laws, without regard to conflict of law principles.</p>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">10. Contact</h4>
+              <p>For questions about these Terms, contact us at <a href="mailto:nightshade.app@proton.me" class="text-accentAmber hover:underline">nightshade.app@proton.me</a>.</p>
+            </div>
+          </div>
+        `;
+      } else if (type === 'contact') {
+        title.textContent = 'Contact Us';
+        body.innerHTML = `
+          <div class="space-y-6 text-sm text-textSecondary leading-relaxed">
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">Get in Touch</h4>
+              <p>We'd love to hear from you. Whether you have a question, feedback, or a bug report, reach out through any of the channels below.</p>
+            </div>
+            <div class="space-y-4">
+              <div class="flex items-start gap-4 p-4 rounded-xl bg-voidMid border border-voidRim">
+                <span class="iconify text-accentAmber mt-0.5" data-icon="mdi:email-outline" data-width="20"></span>
+                <div>
+                  <p class="text-textPrimary font-medium">Email</p>
+                  <a href="mailto:nightshade.app@proton.me" class="text-accentAmber hover:underline">nightshade.app@proton.me</a>
+                </div>
+              </div>
+              <div class="flex items-start gap-4 p-4 rounded-xl bg-voidMid border border-voidRim">
+                <span class="iconify text-accentAmber mt-0.5" data-icon="mdi:github" data-width="20"></span>
+                <div>
+                  <p class="text-textPrimary font-medium">GitHub</p>
+                  <a href="https://github.com/nubawan/NightShade-Website" target="_blank" rel="noopener noreferrer" class="text-accentAmber hover:underline">github.com/nubawan/NightShade-Website</a>
+                  <p class="text-textMuted text-xs mt-1">Report bugs and request features via GitHub Issues</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h4 class="text-textPrimary font-medium mb-2">Response Time</h4>
+              <p>We aim to respond to all inquiries within 48 hours. For bug reports, please include your device model, Android version, and steps to reproduce the issue.</p>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('legalModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+
+    // Close on backdrop click
+    document.getElementById('legalModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('legalModal')) closeModal();
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
   </script>
+
+  <!-- ========== LEGAL MODALS ========== -->
+  <div id="legalModal" class="hidden fixed inset-0 z-[100] items-center justify-center p-4 bg-black/70 backdrop-blur-sm" role="dialog" aria-modal="true">
+    <div class="bg-voidDeep border border-voidRim rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto">
+      <div class="sticky top-0 bg-voidDeep/95 backdrop-blur-sm border-b border-voidRim px-6 py-4 flex items-center justify-between z-10">
+        <h3 id="modalTitle" class="text-lg font-medium text-textPrimary"></h3>
+        <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-voidMid transition-colors text-textMuted hover:text-textPrimary" aria-label="Close modal">
+          <span class="iconify" data-icon="mdi:close" data-width="18"></span>
+        </button>
+      </div>
+      <div id="modalBody" class="px-6 py-6"></div>
+    </div>
+  </div>
+
 </body>
 </html>
